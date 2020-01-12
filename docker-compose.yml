@@ -1,0 +1,20 @@
+version: "3"
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27018:27017"
+  runner:
+    image: arya-runner
+    ports:
+      - "8081:8081"
+  dispatcher:
+    image: arya-dispatcher
+    ports:
+      - "8080:8080"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/arya-dispatcher
+      - ARYA_RUNNER_URI=http://runner:8081
+    depends_on:
+      - runner
+      - mongo
