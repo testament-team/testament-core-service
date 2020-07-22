@@ -22,7 +22,7 @@ export class HarRepository {
     }
 
     async saveHar(id: string, har: IHar) {
-        const stream: Stream = bufferToStream(new Buffer(JSON.stringify(har, null, 4)));
+        const stream: Stream = bufferToStream(Buffer.from(JSON.stringify(har, null, 4)));
         await new Promise((resolve, reject) => {
             stream.pipe(this.bucket.openUploadStream(id))
                 .on("error", (error) => reject(error))
