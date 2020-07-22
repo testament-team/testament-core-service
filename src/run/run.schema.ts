@@ -45,8 +45,8 @@ const ScreenshotSchema = new Schema({
 
 const ActionSchema = new Schema({
     name: { type: String, required: true }, 
-    start: { type: Date, required: true }, 
-    end: { type: Date, required: true }, 
+    date: { type: Date, required: true }, 
+    state: { type: String, required: true }, 
 }, { _id : false });
 
 export const RunSchema = new Schema({
