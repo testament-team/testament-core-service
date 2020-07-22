@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import * as rp from "request-promise-native";
+import rp from "request-promise-native";
 import { resolve } from "url";
 import { IRunSimulationDTO } from "../dtos/run-simulation.dto";
 import { IAction } from "../interfaces/action.interface";
