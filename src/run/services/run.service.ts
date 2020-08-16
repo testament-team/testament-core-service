@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { IHar } from 'src/runner/interfaces/har.interface';
 import { Readable } from 'stream';
-import { IRun } from '../interfaces/run.interface';
+import { Run } from '../interfaces/run.interface';
 import { HarRepository } from '../repositories/har.repository';
 import { RunRepository } from '../repositories/run.repository';
 import { ScreenshotRepository } from '../repositories/screenshot.repository';
@@ -14,19 +14,19 @@ export class RunService {
         
     }
 
-    getRuns(query: any): Promise<IRun[]> {
+    getRuns(query: any): Promise<Run[]> {
         return this.runRepository.find(query);
     }
 
-    async getRun(id: string): Promise<IRun> {
-        const run: IRun = await this.runRepository.findById(id);
+    async getRun(id: string): Promise<Run> {
+        const run: Run = await this.runRepository.findById(id);
         if(run)
             return run;
         throw new NotFoundException();
     }
 
     async getScreenshot(runId: string, screenshotName: string): Promise<Readable> {
-        const run: IRun = await this.runRepository.findById(runId);
+        const run: Run = await this.runRepository.findById(runId);
         if(!run)
             throw new NotFoundException();
 
@@ -38,7 +38,7 @@ export class RunService {
     }
 
     async getHar(runId: string): Promise<IHar> {
-        const run: IRun = await this.runRepository.findById(runId);
+        const run: Run = await this.runRepository.findById(runId);
         if(!run)
             throw new NotFoundException();
 

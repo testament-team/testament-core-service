@@ -3,12 +3,12 @@ import { ObjectID } from 'bson';
 import { env } from 'process';
 import { IHar } from 'src/runner/interfaces/har.interface';
 import { RemoteRunnerService } from 'src/runner/services/remote-runner.service';
-import { ISimulation } from 'src/simulation/interfaces/simulation.interface';
+import { Simulation } from 'src/simulation/interfaces/simulation.interface';
 import { SimulationRepository } from 'src/simulation/simulation.repository';
 import { sleep } from 'src/util/async.util';
 import { ISimulation as IRunnerSimulation } from "../../runner/interfaces/simulation.interface";
 import { SubmitRunDTO } from '../dtos/submit-run.dto';
-import { IRun, IRunStatus } from '../interfaces/run.interface';
+import { Run, RunStatus } from '../interfaces/run.interface';
 import { HarRepository } from '../repositories/har.repository';
 import { RunRepository } from '../repositories/run.repository';
 import { ScreenshotRepository } from '../repositories/screenshot.repository';
@@ -23,8 +23,8 @@ export class DispatchService {
         
     }
 
-    async submitRun(dto: SubmitRunDTO): Promise<IRun> {
-        const simulation: ISimulation = await this.simulationRepository.findById(dto.simulationId);
+    async submitRun(dto: SubmitRunDTO): Promise<Run> {
+        const simulation: Simulation = await this.simulationRepository.findById(dto.simulationId);
         if(!simulation) {
             throw new NotFoundException("Simulation not found");
         }
@@ -34,7 +34,7 @@ export class DispatchService {
    
         const runnerUrl: string = await this.deployRunner(containerId);
 
-        let run: IRun = await this.runSimulation(runnerUrl, simulation, dto, runId)
+        let run: Run = await this.runSimulation(runnerUrl, simulation, dto, runId)
             .catch(async err => {
                 await this.destroyRunner(runnerUrl);
                 throw err;
@@ -59,8 +59,8 @@ export class DispatchService {
         return Promise.resolve(env["ARYA_RUNNER_URI"] || "http://localhost:8081"); // TODO remove
     }
 
-    private async runSimulation(runnerUrl: string, simulation: ISimulation, dto: SubmitRunDTO, runId: string): Promise<IRun> {
-        const run: IRun = await this.runRepository.save({
+    private async runSimulation(runnerUrl: string, simulation: Simulation, dto: SubmitRunDTO, runId: string): Promise<Run> {
+        const run: Run = await this.runRepository.save({
             _id: runId,
             simulation: simulation,
             args: dto.args,
@@ -80,7 +80,7 @@ export class DispatchService {
         let simulation: IRunnerSimulation;
         while(true) {
             simulation = await this.runnerService.getSimulation(runnerUrl);
-            const status: IRunStatus = { value: simulation.status.value, errorMessage: simulation.status.errorMessage };
+            const status: RunStatus = { value: simulation.status.value, errorMessage: simulation.status.errorMessage };
             await this.runRepository.setStatus(runId, status);
             if(status.value !== "running") 
                 return simulation;
@@ -90,7 +90,7 @@ export class DispatchService {
 
     private async saveRunCompletionStatus(runnerUrl: string, runId: string, status: string) {
         if(status === "passed") {
-            const run: IRun = await this.runRepository.findById(runId);
+            const run: Run = await this.runRepository.findById(runId);
             const har: IHar = await this.runnerService.getHar(runnerUrl);
             run.harId = new ObjectID().toHexString();
             run.actions = await this.runnerService.getActions(runnerUrl);

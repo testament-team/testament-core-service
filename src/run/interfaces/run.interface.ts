@@ -1,26 +1,26 @@
 import { IAction } from "src/runner/interfaces/action.interface";
 import { IScreenshot } from "src/runner/interfaces/screenshot.interface";
-import { ISimulation } from "src/simulation/interfaces/simulation.interface";
+import { Simulation } from "src/simulation/interfaces/simulation.interface";
 
-export interface IRunOptions {
+export interface RunOptions {
     generateScripts?: boolean;
 }
 
 export type runStatusValue = "running" | "failed" | "cancelled" | "passed";
 
-export interface IRunStatus {
+export interface RunStatus {
     value: runStatusValue;
     errorMessage?: string;
 }
 
-export interface IRun {
+export interface Run {
     _id?: string;
-    simulation: ISimulation;
+    simulation: Simulation;
     args?: string;
-    options?: IRunOptions;
+    options?: RunOptions;
     start: Date;
     end?: Date;
-    status: IRunStatus;
+    status: RunStatus;
     harId?: string;
     actions?: IAction[];
     screenshots?: IScreenshot[];

@@ -1,7 +1,7 @@
 import { Document, Schema } from "mongoose";
-import { IRun } from "./interfaces/run.interface";
+import { Run } from "./interfaces/run.interface";
 
-export interface IRunDocument extends IRun, Document {
+export interface IRunDocument extends Run, Document {
     _id: string;
 }
 

@@ -1,7 +1,7 @@
 import { Document, Schema } from "mongoose";
-import { ISimulation } from "./interfaces/simulation.interface";
+import { Simulation } from "./interfaces/simulation.interface";
 
-export interface ISimulationDocument extends ISimulation, Document {
+export interface ISimulationDocument extends Simulation, Document {
     _id: string;
 }
 

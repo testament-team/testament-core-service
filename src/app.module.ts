@@ -1,14 +1,33 @@
-import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { TypegooseModule } from "nestjs-typegoose";
 import { env } from 'process';
 import { AppController } from './app.controller';
-import { RunModule } from './run/run.module';
-import { RunnerModule } from './runner/runner.module';
-import { SimulationModule } from './simulation/simulation.module';
+import { ApplicationModule } from './application/application.module';
+import { BlueprintModule } from './blueprint/blueprint.module';
+import { SecurityMiddleware } from './blueprint/security.middleware';
+import { EnvironmentModule } from './environment/environment.module';
+import { NamespaceModule } from './namespace/namespace.module';
+import { setTypegooseGlobalOptions } from './typegoose';
+import { UserModule } from './user/user.module';
+
+setTypegooseGlobalOptions();
 
 @Module({
-  imports: [SimulationModule, MongooseModule.forRoot(env["MONGODB_URI"] || "mongodb://localhost/arya-dispatcher", { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }), RunModule, RunnerModule],
+  imports: [
+    TypegooseModule.forRoot(env["MONGODB_URI"] || "mongodb://localhost:27017/testament-core", {
+      useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
+    }),
+    EnvironmentModule, UserModule, NamespaceModule, BlueprintModule, ApplicationModule
+  ],
   controllers: [AppController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(SecurityMiddleware)
+      .forRoutes("/api/*")
+  }
+
+}

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateSimulationDTO } from "../dtos/create-simulation.dto";
-import { ISimulation } from "../interfaces/simulation.interface";
+import { Simulation } from "../interfaces/simulation.interface";
 import { SimulationRepository } from "../simulation.repository";
 
 @Injectable()
@@ -10,8 +10,8 @@ export class SimulationService {
         
     }
 
-    createSimulation(dto: CreateSimulationDTO): Promise<ISimulation> {
-        const simulation: ISimulation = {
+    createSimulation(dto: CreateSimulationDTO): Promise<Simulation> {
+        const simulation: Simulation = {
             name: dto.name,
             description: dto.description,
             image: dto.image,
@@ -22,8 +22,8 @@ export class SimulationService {
         return this.simulationRepository.save(simulation);
     }
 
-    async updateSimulation(id: string, dto: CreateSimulationDTO): Promise<ISimulation> {
-        const simulation: ISimulation = await this.getSimulation(id);
+    async updateSimulation(id: string, dto: CreateSimulationDTO): Promise<Simulation> {
+        const simulation: Simulation = await this.getSimulation(id);
         simulation.name = dto.name;
         simulation.description = dto.description;
         simulation.image = dto.image;
@@ -32,12 +32,12 @@ export class SimulationService {
         return this.simulationRepository.save(simulation);
     }
 
-    getSimulations(query: any): Promise<ISimulation[]> {
+    getSimulations(query: any): Promise<Simulation[]> {
         return this.simulationRepository.find(query);
     }
 
-    async getSimulation(id: string): Promise<ISimulation> {
-        const simulation: ISimulation = await this.simulationRepository.findById(id);
+    async getSimulation(id: string): Promise<Simulation> {
+        const simulation: Simulation = await this.simulationRepository.findById(id);
         if(simulation)
             return simulation;
         throw new NotFoundException();

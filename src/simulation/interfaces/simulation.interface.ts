@@ -1,17 +1,17 @@
-export interface ISimulationGitRepository {
+export class SimulationGitRepository {
     url: string;
 }
 
-export interface ISimulationRepository {
-    git?: ISimulationGitRepository;
+export class SimulationRepository {
+    git?: SimulationGitRepository;
 }
 
-export interface ISimulation {
+export class Simulation {
     _id?: string;
     name: string;
     description?: string;
     image: string;
-    repository: ISimulationRepository;
+    repository: SimulationRepository;
     scripts: string[];
     created: Date;
 }

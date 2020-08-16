@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { ISimulation } from "./interfaces/simulation.interface";
+import { Simulation } from "./interfaces/simulation.interface";
 import { ISimulationDocument } from "./simulation.schema";
 
 @Injectable()
@@ -11,16 +11,16 @@ export class SimulationRepository {
         
     }
 
-    save(simulation: ISimulation): Promise<ISimulation> {
+    save(simulation: Simulation): Promise<Simulation> {
         const instance = new this.simulationModel(simulation);
         return instance.save();
     }
 
-    findById(id: string): Promise<ISimulation> {
+    findById(id: string): Promise<Simulation> {
         return this.simulationModel.findOne({ _id: id }).exec();
     }
 
-    find(query: any): Promise<ISimulation[]> {
+    find(query: any): Promise<Simulation[]> {
         return this.simulationModel.find(query).exec();
     }
 

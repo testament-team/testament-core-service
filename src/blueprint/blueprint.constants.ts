@@ -1,0 +1,1 @@
+export const UserIdHeader: string = "x-user-id";

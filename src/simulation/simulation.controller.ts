@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { CreateSimulationDTO } from "./dtos/create-simulation.dto";
 import { UpdateSimulationDTO } from "./dtos/update-simulation.dto";
-import { ISimulation } from "./interfaces/simulation.interface";
+import { Simulation } from "./interfaces/simulation.interface";
 import { SimulationService } from "./services/simulation.service";
 
 @Controller("/simulations")
@@ -12,7 +12,7 @@ export class SimulationController {
     }
 
     @Post()
-    createSimulation(@Body() dto: CreateSimulationDTO): Promise<ISimulation> {
+    createSimulation(@Body() dto: CreateSimulationDTO): Promise<Simulation> {
         return this.simulationService.createSimulation(dto);
     }
 
@@ -22,12 +22,12 @@ export class SimulationController {
     }
 
     @Get()
-    getSimulations(@Query() query: any): Promise<ISimulation[]> {
+    getSimulations(@Query() query: any): Promise<Simulation[]> {
         return this.simulationService.getSimulations(query);
     }
 
     @Get(":id")
-    getSimulation(@Param("id") id: string): Promise<ISimulation> {
+    getSimulation(@Param("id") id: string): Promise<Simulation> {
         return this.simulationService.getSimulation(id);
     }
 

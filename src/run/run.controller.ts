@@ -4,7 +4,7 @@ import { IHar } from 'src/runner/interfaces/har.interface';
 import { streamToBuffer } from 'src/util/stream.util';
 import { Readable } from 'stream';
 import { SubmitRunDTO } from './dtos/submit-run.dto';
-import { IRun } from './interfaces/run.interface';
+import { Run } from './interfaces/run.interface';
 import { DispatchService } from './services/dispatch.service';
 import { RunService } from './services/run.service';
 
@@ -16,17 +16,17 @@ export class RunController {
     }
 
     @Post()
-    submitRun(@Body() dto: SubmitRunDTO): Promise<IRun> {
+    submitRun(@Body() dto: SubmitRunDTO): Promise<Run> {
         return this.dispatchService.submitRun(dto);
     }
 
     @Get()
-    getRuns(@Query() query: any): Promise<IRun[]> {
+    getRuns(@Query() query: any): Promise<Run[]> {
         return this.runService.getRuns(query);
     }
 
     @Get(":id")
-    getRun(@Param("id") id: string): Promise<IRun> {
+    getRun(@Param("id") id: string): Promise<Run> {
         return this.runService.getRun(id);
     }
 

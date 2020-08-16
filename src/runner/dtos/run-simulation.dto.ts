@@ -1,7 +1,7 @@
-import { ISimulationRepository } from "src/simulation/interfaces/simulation.interface";
+import { SimulationRepository } from "src/simulation/interfaces/simulation.interface";
 
 export interface IRunSimulationDTO {
-    repository: ISimulationRepository;
+    repository: SimulationRepository;
     scripts: string[];
     args: string;
 }
