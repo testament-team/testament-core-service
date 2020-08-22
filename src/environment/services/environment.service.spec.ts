@@ -23,7 +23,7 @@ export class EnvironmentServiceTests {
         const dto: CreateEnvironmentDTO = new CreateEnvironmentDTO();
         dto.name = "e1";
         const environment: Environment = await this.environmentService.createEnvironment(dto);
-        assert.deepEqual(environment, { id: "123", name: "e1" });
+        assert.deepEqual(environment, { name: "e1" });
     } 
 
     // @test
