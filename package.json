@@ -1,5 +1,5 @@
 {
-  "name": "@testament/testament-core-service",
+  "name": "@testament/core-service",
   "version": "0.0.1",
   "description": "Testament Core Service",
   "author": "jlazarre95 <jlazarre95@gmail.com>",
@@ -11,7 +11,10 @@
     "url": "git+https://github.com/testament-team/testament-core-service.git"
   },
   "files": [
-    "dist/**/*"
+    "dist/src/**",
+    "index.js",
+    "index.d.ts",
+    "index.js.map"
   ],
   "keywords": [
     "testament",
