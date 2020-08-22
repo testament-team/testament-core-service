@@ -7,7 +7,7 @@ import { Namespace } from './namespace';
 
 @Module({
     imports: [TypegooseModule.forFeature([Namespace])],
-    exports: [NamespaceRepository],
+    exports: [NamespaceRepository, NamespaceService],
     controllers: [NamespaceController],
     providers: [NamespaceService, NamespaceRepository]
 })

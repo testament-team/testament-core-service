@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, Param, Post, Put, Query } from '@nestjs/common';
+import { NamespaceService } from 'src/namespace/services/namespace.service';
 import { getPageOptions, Page } from 'src/pagination/pagination';
 import { CreateUserDTO } from 'src/user/dtos/create-user.dto';
 import { UpdateUserDTO } from 'src/user/dtos/update-user.dto';
@@ -8,7 +9,7 @@ import { User } from 'src/user/user';
 @Controller("/api/users")
 export class UserController {
 
-    constructor(private userService: UserService) { }
+    constructor(private userService: UserService, private namespaceService: NamespaceService) { }
 
     @Post()
     createUser(@Body() dto: CreateUserDTO) {
@@ -18,6 +19,11 @@ export class UserController {
     @Get()
     getAllUsers(@Query() query: any): Promise<Page<User>> {
         return this.userService.getAllUsers(query, getPageOptions(query));
+    }
+
+    @Get(":id/namespaces")
+    getAllNamespacesForUser(@Headers("x-user-id") userId: string, @Param(":id") memberId: string, @Query() query: any): Promise<string[]> {
+        return this.namespaceService.getAllNamespacesForMember(userId, memberId, query);
     }
 
     @Get(":id")

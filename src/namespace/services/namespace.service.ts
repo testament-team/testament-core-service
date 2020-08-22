@@ -29,6 +29,14 @@ export class NamespaceService {
         return this.namespaceRepository.find(query, pageOptions);
     }
 
+    async getAllNamespacesForMember(userId: string, memberId: string, query: any): Promise<string[]> {
+        if(userId !== memberId) {
+            throw new Error("userId must be equal to memberId");
+        }
+        const namespaces: Namespace[] = await this.namespaceRepository.findByMember(Object.assign(query, { members: { userId: userId } }));
+        return namespaces.map(n => n.id);
+    }
+
     async getNamespace(userId: string, namespaceId: string): Promise<Namespace> {
         const namespace: Namespace = await this.namespaceRepository.findById(namespaceId);
         if(!namespace)
