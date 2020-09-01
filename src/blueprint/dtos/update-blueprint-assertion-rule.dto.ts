@@ -17,5 +17,6 @@ export class UpdateBlueprintAssertionRuleDTO {
     @ApiProperty()
     @IsString()
     @Length(1, 512)
-    text: string;
+    @IsOptional()
+    text?: string;
 }
