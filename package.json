@@ -45,6 +45,7 @@
     "docker:compose:down": "docker-compose down",
     "docker:compose:up:all": "docker-compose -f docker.compose.all.yml up",
     "docker:compose:down:all": "docker-compose -f docker.compose.all.yml down",
+    "prepare": "npm run build:prod",
     "prepublishOnly": "npm test",
     "version": "git add -A",
     "postversion": "git push && git push --tags"
