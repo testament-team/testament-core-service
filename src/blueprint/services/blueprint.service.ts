@@ -102,13 +102,13 @@ export class BlueprintService {
         return this.blueprintRepository.delete(blueprintId);
     }
 
-    async addBlueprintApp(userId: string, blueprintId: string, dto: AddBlueprintAppDTO) {
+    async addBlueprintApp(userId: string, blueprintId: string, dto: AddBlueprintAppDTO): Promise<string[]> {
         await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.addBlueprintApp(blueprintId, dto.id, lastModified);
     }
 
-    async deleteBlueprintApp(userId: string, blueprintId: string, appId: string) {
+    async deleteBlueprintApp(userId: string, blueprintId: string, appId: string): Promise<string[]> {
         await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.deleteBlueprintApp(blueprintId, appId, lastModified);

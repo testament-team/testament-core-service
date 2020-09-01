@@ -123,12 +123,14 @@ export class BlueprintRepository {
         return this.blueprintModel.findOneAndDelete({ _id: id }).exec();
     }
 
-    addBlueprintApp(blueprintId: string, appId: string, lastModified: LastModifiedMetadata): Promise<Blueprint> {
-        return this.blueprintModel.findOneAndUpdate({ _id: blueprintId }, { $addToSet: { appIds: appId }, $set: { "metadata.lastModified": lastModified } }, { new: true }).exec();
+    async addBlueprintApp(blueprintId: string, appId: string, lastModified: LastModifiedMetadata): Promise<string[]> {
+        const blueprint: Blueprint = await this.blueprintModel.findOneAndUpdate({ _id: blueprintId }, { $addToSet: { appIds: appId }, $set: { "metadata.lastModified": lastModified } }, { new: true }).exec();
+        return blueprint ? blueprint.appIds : null;
     }
 
-    deleteBlueprintApp(blueprintId: string, appId: string, lastModified: LastModifiedMetadata): Promise<Blueprint> {
-        return this.blueprintModel.findOneAndUpdate({ _id: blueprintId }, { $pull: { appIds: appId, $set: { "metadata.lastModified": lastModified } } }, { new: true }).exec();
+    async deleteBlueprintApp(blueprintId: string, appId: string, lastModified: LastModifiedMetadata): Promise<string[]> {
+        const blueprint: Blueprint = await this.blueprintModel.findOneAndUpdate({ _id: blueprintId }, { $pull: { appIds: appId, $set: { "metadata.lastModified": lastModified } } }, { new: true }).exec();
+        return blueprint ? blueprint.appIds : null;
     }
 
     async addBlueprintAssertion(blueprintId: string, assertion: AddBlueprintAssertionRuleDTO, lastModified: LastModifiedMetadata): Promise<AssertionRule> {

@@ -56,12 +56,12 @@ export class BlueprintController {
     }
 
     @Post(":id/apps")
-    addBlueprintApp(@Headers("x-user-id") userId: string, @Param("id") blueprintId: string, @Body() dto: AddBlueprintAppDTO): Promise<Blueprint> {
+    addBlueprintApp(@Headers("x-user-id") userId: string, @Param("id") blueprintId: string, @Body() dto: AddBlueprintAppDTO): Promise<string[]> {
         return this.blueprintService.addBlueprintApp(userId, blueprintId, dto);
     }   
 
     @Delete(":id/apps/:appId")
-    deleteBlueprintApp(@Headers("x-user-id") userId: string, @Param("id") blueprintId: string, @Param("appId") appId: string): Promise<Blueprint> {
+    deleteBlueprintApp(@Headers("x-user-id") userId: string, @Param("id") blueprintId: string, @Param("appId") appId: string): Promise<string[]> {
         return this.blueprintService.deleteBlueprintApp(userId, blueprintId, appId);
     }  
 
