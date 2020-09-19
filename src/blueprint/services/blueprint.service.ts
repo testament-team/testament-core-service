@@ -4,7 +4,6 @@ import { Blueprint } from 'src/blueprint/blueprint';
 import { CreateBlueprintDTO } from 'src/blueprint/dtos/create-blueprint.dto';
 import { UpdateBlueprintDTO } from 'src/blueprint/dtos/update-blueprint.dto';
 import { BlueprintRepository, PartialBlueprint, PartialBlueprintAssertion, PartialBlueprintCorrelation, PartialBlueprintFile, PartialBlueprintParameter, PartialBlueprintPermissions, PartialBlueprintRunConfiguration, PartialBlueprintUser } from 'src/blueprint/repositories/blueprint.repository';
-import { Namespace } from 'src/namespace/namespace';
 import { NamespaceRepository } from 'src/namespace/repositories/namespace.repository';
 import { Page, PageOptions } from 'src/pagination/pagination';
 import { AddBlueprintAppDTO } from '../dtos/add-blueprint-app.dto';
@@ -74,16 +73,16 @@ export class BlueprintService {
     }
 
     async getAllBlueprints(userId: string, query: any, pageOptions: PageOptions): Promise<Page<Blueprint>> {
-        const namespaceIds: string[] = await this.getNamespacesForUser(userId);     
+        const namespaceIds: string[] = await this.namespaceRepository.getNamespaceIdsForUser(userId);     
         return this.blueprintRepository.findByAccess(userId, namespaceIds, Access.READ, query, pageOptions);
     }
 
     async getBlueprint(userId: string, blueprintId: string): Promise<Blueprint> {
-        return await this.ensureBlueprintAccess(userId, blueprintId, Access.READ);
+        return this.getBlueprintByAccess(userId, blueprintId, Access.READ);
     }
 
     async updateBlueprint(userId: string, blueprintId: string, dto: UpdateBlueprintDTO): Promise<Blueprint> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         const partialBlueprint: PartialBlueprint = {
             name: dto.name,
@@ -98,30 +97,30 @@ export class BlueprintService {
     }
 
     async deleteBlueprint(userId: string, blueprintId: string): Promise<Blueprint> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.ADMIN);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.ADMIN);
         return this.blueprintRepository.delete(blueprintId);
     }
 
     async addBlueprintApp(userId: string, blueprintId: string, dto: AddBlueprintAppDTO): Promise<string[]> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.addBlueprintApp(blueprintId, dto.id, lastModified);
     }
 
     async deleteBlueprintApp(userId: string, blueprintId: string, appId: string): Promise<string[]> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.deleteBlueprintApp(blueprintId, appId, lastModified);
     }
 
     async addBlueprintAssertion(userId: string, blueprintId: string, dto: AddBlueprintAssertionRuleDTO): Promise<AssertionRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.addBlueprintAssertion(blueprintId, Object.assign(dto, { id: new ObjectID().toHexString() }), lastModified);
     }
 
     async updateBlueprintAssertion(userId: string, blueprintId: string, assertionId: string, dto: UpdateBlueprintAssertionRuleDTO): Promise<AssertionRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         const partialAssertion: PartialBlueprintAssertion = {
             name: dto.name,
@@ -132,19 +131,19 @@ export class BlueprintService {
     }
 
     async deleteBlueprintAssertion(userId: string, blueprintId: string, assertionId: string): Promise<AssertionRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.deleteBlueprintAssertion(blueprintId, assertionId, lastModified);
     }
 
     async addBlueprintParameter(userId: string, blueprintId: string, dto: AddBlueprintParameterRuleDTO): Promise<ParameterRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.addBlueprintParameter(blueprintId, Object.assign(dto, { id: new ObjectID().toHexString() }), lastModified);
     }
 
     async updateBlueprintParameter(userId: string, blueprintId: string, parameterId: string, dto: UpdateBlueprintParameterRuleDTO): Promise<ParameterRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         const partialParameter: PartialBlueprintParameter = {
             name: dto.name,
@@ -158,19 +157,19 @@ export class BlueprintService {
     }
 
     async deleteBlueprintParameter(userId: string, blueprintId: string, parameterId: string): Promise<ParameterRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.deleteBlueprintParameter(blueprintId, parameterId, lastModified);
     }
 
     async addBlueprintCorrelation(userId: string, blueprintId: string, dto: AddBlueprintCorrelationRuleDTO): Promise<CorrelationRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.addBlueprintCorrelation(blueprintId, Object.assign(dto, { id: new ObjectID().toHexString() }), lastModified);
     }
 
     async updateBlueprintCorrelation(userId: string, blueprintId: string, correlationId: string, dto: UpdateBlueprintCorrelationRuleDTO): Promise<CorrelationRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         const partialCorrelation: PartialBlueprintCorrelation = {
             name: dto.name,
@@ -190,19 +189,19 @@ export class BlueprintService {
     }
 
     async deleteBlueprintCorrelation(userId: string, blueprintId: string, correlationId: string): Promise<CorrelationRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.deleteBlueprintCorrelation(blueprintId, correlationId, lastModified);
     }
 
     async addBlueprintFile(userId: string, blueprintId: string, dto: AddBlueprintFileRuleDTO): Promise<FileRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.addBlueprintFile(blueprintId, Object.assign(dto, { id: new ObjectID().toHexString() }), lastModified);
     }
     
     async updateBlueprintFile(userId: string, blueprintId: string, fileId: string, dto: UpdateBlueprintFileRuleDTO): Promise<FileRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         const partialFile: PartialBlueprintFile = {
             name: dto.name,
@@ -217,19 +216,19 @@ export class BlueprintService {
     }
 
     async deleteBlueprintFile(userId: string, blueprintId: string, fileId: string): Promise<FileRule> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.deleteBlueprintFile(blueprintId, fileId, lastModified);
     }
 
     async addBlueprintRunConfiguration(userId: string, blueprintId: string, dto: AddBlueprintRunConfigurationDTO): Promise<RunConfiguration> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.addBlueprintRunConfiguration(blueprintId, Object.assign(dto, { id: new ObjectID().toHexString() }), lastModified);
     }
     
     async updateBlueprintRunConfiguration(userId: string, blueprintId: string, runconfigurationId: string, dto: UpdateBlueprintRunConfigurationDTO): Promise<RunConfiguration> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         const partialRunConfiguration: PartialBlueprintRunConfiguration = {
             name: dto.name,
@@ -242,13 +241,13 @@ export class BlueprintService {
     }
 
     async deleteBlueprintRunConfiguration(userId: string, blueprintId: string, runconfigurationId: string): Promise<RunConfiguration> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.deleteBlueprintRunConfiguration(blueprintId, runconfigurationId, lastModified);
     }
 
     async updateBlueprintPermissions(userId: string, blueprintId: string, dto: UpdateBlueprintPermissionsDTO): Promise<Permissions> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         const partialPermissions: PartialBlueprintPermissions = {
             all: dto.all,
@@ -258,13 +257,13 @@ export class BlueprintService {
     }
 
     async addBlueprintUser(userId: string, blueprintId: string, dto: AddBlueprintUserDTO): Promise<UserPermissions> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.addBlueprintUser(blueprintId, dto, lastModified);
     }
     
     async updateBlueprintUser(userId: string, blueprintId: string, otherUserId: string, dto: UpdateBlueprintUserDTO): Promise<UserPermissions> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         const partialUser: PartialBlueprintUser = {
             id: otherUserId,
@@ -274,13 +273,13 @@ export class BlueprintService {
     }
 
     async deleteBlueprintUser(userId: string, blueprintId: string, otherUserId: string): Promise<UserPermissions> {
-        await this.ensureBlueprintAccess(userId, blueprintId, Access.WRITE);
+        await this.getBlueprintByAccess(userId, blueprintId, Access.WRITE);
         const lastModified: LastModifiedMetadata = this.getLastModifiedMetadata(userId);
         return this.blueprintRepository.deleteBlueprintUser(blueprintId, otherUserId, lastModified);
     }
-
-    private async ensureBlueprintAccess(userId: string, blueprintId: string, access: Access): Promise<Blueprint> {
-        const namespaceIds: string[] = await this.getNamespacesForUser(userId);  
+    
+    async getBlueprintByAccess(userId: string, blueprintId: string, access: Access): Promise<Blueprint> {
+        const namespaceIds: string[] = await this.namespaceRepository.getNamespaceIdsForUser(userId);  
         const blueprint: Blueprint = await this.blueprintRepository.findById(blueprintId);
         if(!blueprint) {
             throw new NotFoundException();
@@ -289,12 +288,6 @@ export class BlueprintService {
             throw new ForbiddenException();
         }
         return blueprint;
-    }
-
-    private async getNamespacesForUser(id: string): Promise<string[]> {
-        const namespaces: Namespace[] = await this.namespaceRepository.findByMember(id);
-        const namespaceIds: string[] = namespaces.map(n => n.id);     
-        return namespaceIds;
     }
 
     private getLastModifiedMetadata(userId: string, type: ModificationType = ModificationType.EDIT): LastModifiedMetadata {

@@ -13,7 +13,7 @@ import { RunConfiguration } from "./models/run-configuration";
 import { Simulation } from "./models/simulation";
 
 export enum ScriptType {
-    LOADRUNNER = "loadrunner"
+    LOADRUNNER = "load-runner"
 }
 
 export class ScriptGeneration {

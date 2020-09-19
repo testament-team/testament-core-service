@@ -1,18 +1,17 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { RunnerModule } from 'src/runner/runner.module';
-import { SimulationModule } from 'src/simulation/simulation.module';
-import { HarRepository } from './repositories/har.repository';
-import { RunRepository } from './repositories/run.repository';
-import { ScreenshotRepository } from './repositories/screenshot.repository';
-import { RunController } from './run.controller';
-import { RunSchema } from './run.schema';
-import { DispatchService } from './services/dispatch.service';
-import { RunService } from './services/run.service';
+import { TypegooseModule } from 'nestjs-typegoose';
+import { AmqpModule } from 'src/amqp/amqp.module';
+import { BlueprintModule } from 'src/blueprint/blueprint.module';
+import { NamespaceModule } from 'src/namespace/namespace.module';
+import { RunRepository } from 'src/run/repositories/run.repository';
+import { RunController } from 'src/run/run.controller';
+import { RunService } from 'src/run/services/run.service';
+import { Run } from './run';
+import { RunEventBus } from './services/run.event-bus';
 
 @Module({
-  imports: [SimulationModule, RunnerModule, MongooseModule.forFeature([{ name: "Run", schema: RunSchema }])],
-  controllers: [RunController],
-  providers: [RunService, RunRepository, DispatchService, HarRepository, ScreenshotRepository]
+    imports: [TypegooseModule.forFeature([Run]), BlueprintModule, NamespaceModule, AmqpModule],
+    controllers: [RunController],
+    providers: [RunEventBus, RunRepository, RunService]
 })
 export class RunModule {}

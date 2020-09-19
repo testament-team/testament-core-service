@@ -1,31 +1,19 @@
 version: "3"
 services:
-  # rabbit:
-  #   image: rabbitmq
-  #   ports:
-  #     - "27017:27017"
-  #   volumes:
-  #     - /data/db:/data/db
+  rabbit:
+    image: rabbitmq:3-management
+    ports:
+      - "5671:5671"
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - /data/db:/data/db
   mongo:
     image: mongo
     ports:
       - "27017:27017"
     volumes:
       - /data/db:/data/db
-  gateway-service:
-    image: testament-gateway-service
-    ports:
-      - "8080:8080"
-    environment:
-      CORE_SERVICE_HOST: http://core-service:8081
-      RUN_SERVICE_HOST: http://run-service:8082
-  # run-service:
-  #   image: testament-simulation-runner-service
-  #   ports:
-  #     - "8082:8082"
-  #   depends_on:
-  #     - rabbit
-  #     - mongo
   simulation-runner-service:
     image: testament-simulation-runner-service
     ports:

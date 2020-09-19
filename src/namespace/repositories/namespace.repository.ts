@@ -39,4 +39,10 @@ export class NamespaceRepository {
         return this.namespaceModel.findOneAndDelete({ _id: id }).exec();
     }
 
+    async getNamespaceIdsForUser(id: string): Promise<string[]> {
+        const namespaces: Namespace[] = await this.findByMember(id);
+        const namespaceIds: string[] = namespaces.map(n => n.id);     
+        return namespaceIds;
+    }
+
 }

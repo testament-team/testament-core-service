@@ -9,6 +9,7 @@ import { Blueprint } from './blueprint';
 @Module({
     imports: [TypegooseModule.forFeature([Blueprint]), NamespaceModule],
     controllers: [BlueprintController],
-    providers: [BlueprintService, BlueprintRepository]
+    providers: [BlueprintService, BlueprintRepository],
+    exports: [BlueprintService, BlueprintRepository]
 })
 export class BlueprintModule {}

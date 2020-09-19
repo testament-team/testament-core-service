@@ -22,7 +22,7 @@ export class UserController {
     }
 
     @Get(":id/namespaces")
-    getAllNamespacesForUser(@Headers("x-user-id") userId: string, @Param(":id") memberId: string, @Query() query: any): Promise<string[]> {
+    getAllNamespacesForUser(@Headers("x-user-id") userId: string, @Param("id") memberId: string, @Query() query: any): Promise<string[]> {
         return this.namespaceService.getAllNamespacesForMember(userId, memberId, query);
     }
 

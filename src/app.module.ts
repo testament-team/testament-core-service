@@ -7,6 +7,7 @@ import { BlueprintModule } from './blueprint/blueprint.module';
 import { SecurityMiddleware } from './blueprint/security.middleware';
 import { EnvironmentModule } from './environment/environment.module';
 import { NamespaceModule } from './namespace/namespace.module';
+import { RunModule } from './run/run.module';
 import { setTypegooseGlobalOptions } from './typegoose';
 import { UserModule } from './user/user.module';
 
@@ -17,7 +18,7 @@ setTypegooseGlobalOptions();
     TypegooseModule.forRoot(env["MONGODB_URI"] || "mongodb://localhost:27017/testament-core", {
       useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true, useFindAndModify: false
     }),
-    EnvironmentModule, UserModule, NamespaceModule, BlueprintModule, ApplicationModule
+    EnvironmentModule, UserModule, NamespaceModule, BlueprintModule, ApplicationModule, RunModule
   ],
   controllers: [AppController],
   providers: [],

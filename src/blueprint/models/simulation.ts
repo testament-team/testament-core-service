@@ -6,6 +6,7 @@ import { ArrayMaxSize, ArrayMinSize, IsEnum, IsOptional, IsString, Length, Valid
 export enum SimulationType {
     JAVA_CHROMIUM = "java_chromium"
 }
+
 export enum RepositoryType {
     GIT = "git"
 }

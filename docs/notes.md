@@ -285,6 +285,13 @@ run_configurations:
         # auto-wait: 2
     script_generation:
       type: loadrunner
+      loadrunner:
+        upload:
+          pcHost: https://performance-center-host
+          pcUsername: user
+          pcPassword: password
+          pcDomain: domain
+          pcProject: project
       script_name: HALO_UltiPro_SSO_Cognos
       auto_import_correlations: false
 

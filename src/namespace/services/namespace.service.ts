@@ -30,10 +30,11 @@ export class NamespaceService {
     }
 
     async getAllNamespacesForMember(userId: string, memberId: string, query: any): Promise<string[]> {
+        // TODO: support query
         if(userId !== memberId) {
             throw new Error("userId must be equal to memberId");
         }
-        const namespaces: Namespace[] = await this.namespaceRepository.findByMember(Object.assign(query, { members: { userId: userId } }));
+        const namespaces: Namespace[] = await this.namespaceRepository.findByMember(memberId);
         return namespaces.map(n => n.id);
     }
 
