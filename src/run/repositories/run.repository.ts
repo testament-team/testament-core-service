@@ -14,6 +14,8 @@ export class PartialRun {
     status?: RunStatus;
     error?: string;
     metadata?: RunMetadata;
+    metadataSimulationArtifactsId?: string;
+    metadataScriptAssetsId?: string;
     metadataTimeStarted?: Date;
     metadataTimeEnded?: Date;
 }
@@ -52,6 +54,8 @@ export class RunRepository {
         $set(update, "metadata", partialRun.metadata);
         $set(update, "metadata.timeStarted", partialRun.metadataTimeStarted);
         $set(update, "metadata.timeEnded", partialRun.metadataTimeEnded);
+        $set(update, "metadata.simulationArtifactsId", partialRun.metadataSimulationArtifactsId);
+        $set(update, "metadata.scriptAssetsId", partialRun.metadataScriptAssetsId);
         return this.runModel.findOneAndUpdate({ _id: id }, update, { new: true }).exec();
     }
 

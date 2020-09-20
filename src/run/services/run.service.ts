@@ -108,13 +108,20 @@ export class RunService implements OnApplicationBootstrap {
             case SimulationStatus.COMPLETED:
                 const run: Run = await this.runRepository.findById(event.runId);
                 if(!run.runConfiguration.scriptGenerationOptions) {
-                    await this.runRepository.update(event.runId, { status: RunStatus.COMPLETED, metadataTimeEnded: event.time });
+                    await this.runRepository.update(event.runId, { status: RunStatus.COMPLETED, metadataSimulationArtifactsId: event.artifactsId, metadataTimeEnded: event.time });
                 } else {
                     await this.runEventBus.publishScriptGenerationStartEvent({
                         runId: run.id,
                         type: run.runConfiguration.scriptGenerationOptions.type,
                         name: run.runConfiguration.scriptGenerationOptions.scriptName || run.blueprint.name,
                         rules: run.blueprint.scriptGeneration,
+                        artifactsId: run.metadata.simulationArtifactsId,
+                        simulationArgs: run.runConfiguration.simulationOptions.args,
+                        creator: {
+                            name: "<unknown>", // TODO: Implement
+                            userId: run.metadata.creator.userId,
+                            email: null, // TODO: implement
+                        }
                     });
                 }
                 break;
@@ -136,7 +143,7 @@ export class RunService implements OnApplicationBootstrap {
                 await this.runRepository.update(event.runId, { status: RunStatus.CANCELLED, error: event.error, metadataTimeEnded: event.time });
                 break;
             case ScriptGenerationStatus.COMPLETED:
-                await this.runRepository.update(event.runId, { status: RunStatus.COMPLETED, metadataTimeEnded: event.time });
+                await this.runRepository.update(event.runId, { status: RunStatus.COMPLETED, metadataScriptAssetsId: event.assetsId, metadataTimeEnded: event.time });
                 break;
             default:
                 await this.runRepository.update(event.runId, { status: RunStatus.FAILED, error: `Unknown script run status: ${event.status}` });

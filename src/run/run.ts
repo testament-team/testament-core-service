@@ -28,6 +28,12 @@ export class RunMetadata {
 
     @prop()
     timeEnded?: Date;
+
+    @prop()
+    simulationArtifactsId?: string;
+
+    @prop()
+    scriptAssetsId?: string;
 }
 
 @modelOptions(getSharedModelOptions())

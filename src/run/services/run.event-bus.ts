@@ -1,6 +1,7 @@
 import { Inject, Injectable, OnModuleInit } from "@nestjs/common";
 import { Channel, ConsumeMessage } from "amqplib";
 import { AssertionRule, CorrelationRule, FileRule, ParameterRule, Repository, ScriptType, SimulationType } from "src/blueprint";
+import { ScriptGenerationCreator } from "src/blueprint/models/script-generation-creator";
 
 export enum SimulationStatus {
     RUNNING = "running",
@@ -22,6 +23,7 @@ export interface SimulationStatusChangedEvent {
     status: SimulationStatus;
     error: string;
     time: Date;
+    artifactsId?: string;
 }
 
 export enum ScriptGenerationStatus {
@@ -36,6 +38,8 @@ export interface ScriptGenerationRules {
     files: FileRule[];
     parameters: ParameterRule[];
     correlations: CorrelationRule[];
+    // excludeUrls: ExcludeUrlRule[];
+    // excludeHeaders: ExcludeHeaderRule[];
 }
 
 export interface ScriptGenerationStartEvent {
@@ -43,6 +47,9 @@ export interface ScriptGenerationStartEvent {
     type: ScriptType;
     name: string;
     rules: ScriptGenerationRules;
+    artifactsId: string;
+    simulationArgs: string;
+    creator: ScriptGenerationCreator;
 }
 
 export interface ScriptGenerationStatusChangedEvent {
@@ -50,6 +57,7 @@ export interface ScriptGenerationStatusChangedEvent {
     status: ScriptGenerationStatus;
     error: string;
     time: Date;
+    assetsId?: string;
 }
 
 export interface EventOptions {
