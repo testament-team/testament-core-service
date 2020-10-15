@@ -10,14 +10,20 @@ services:
     image: mongo
     ports:
       - "27017:27017"
-    volumes:
-      - /data/db:/data/db
+  mongo-seed:
+    build: ./db
+    environment:
+      HOST: mongo
+      DB: testament-core
+    restart: on-failure
+    depends_on:
+      - mongo
   simulation-runner-service:
     image: testament-simulation-runner-service
     ports:
       - "8084:8083"
     env_file: env/simulation-runner.env
-    restart: on-failure
+    restart: always
     depends_on:
       - rabbit
   script-generator-service:
@@ -25,6 +31,6 @@ services:
     ports:
       - "8085:8085"
     env_file: env/script-generator.env
-    restart: on-failure
+    restart: always
     depends_on:
       - rabbit

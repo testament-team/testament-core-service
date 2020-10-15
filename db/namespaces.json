@@ -1,0 +1,30 @@
+[
+    {
+        "_id": {
+            "$oid": "5f30f8474f8e2d0b60dacd43"
+        },
+        "name": "Performance Engineering",
+        "members": [
+            {
+                "_id": {
+                    "$oid": "5f30f8474f8e2d0b60dacd44"
+                },
+                "userId": "5f2f5ff5741f07130a823603"
+            }
+        ],
+        "metadata": {
+            "_id": {
+                "$oid": "5f30f8474f8e2d0b60dacd45"
+            },
+            "creator": {
+                "_id": {
+                    "$oid": "5f30f8474f8e2d0b60dacd46"
+                },
+                "userId": "5f2f5ff5741f07130a823603",
+                "timeCreated": {
+                    "$date": "2020-08-10T07:33:27.437Z"
+                }
+            }
+        }
+    }
+]

@@ -1,0 +1,99 @@
+[
+    {
+        "_id": {
+            "$oid": "5f34a3b7ec2479f276ff4c35"
+        },
+        "appIds": [],
+        "environmentIds": [],
+        "name": "Google Image Search",
+        "description": "Search images on Google using a specified search query",
+        "namespaceId": "5f30f8474f8e2d0b60dacd43",
+        "simulation": {
+            "runCommands": [
+                "gradle build -x test",
+                "java -jar build/libs/testment-core-0.0.1.jar ${args}"
+            ],
+            "_id": {
+                "$oid": "5f34a3b7ec2479f276ff4c36"
+            },
+            "type": "java_chromium",
+            "repository": {
+                "_id": {
+                    "$oid": "5f34a3b7ec2479f276ff4c37"
+                },
+                "type": "git",
+                "git": {
+                    "_id": {
+                        "$oid": "5f34a3b7ec2479f276ff4c38"
+                    },
+                    "url": "https://github.com/testment-team/testment-core-java",
+                    "username": "johndoe01",
+                    "password": "password"
+                }
+            }
+        },
+        "permissions": {
+            "_id": {
+                "$oid": "5f34a3b7ec2479f276ff4c39"
+            },
+            "all": {
+                "_id": {
+                    "$oid": "5f34a3b7ec2479f276ff4c3a"
+                },
+                "access": 0
+            },
+            "namespace": {
+                "_id": {
+                    "$oid": "5f34a3b7ec2479f276ff4c3b"
+                },
+                "access": 2
+            },
+            "users": [
+                {
+                    "_id": {
+                        "$oid": "5f34a3b7ec2479f276ff4c3c"
+                    },
+                    "id": "5f2f5ff5741f07130a823603",
+                    "access": 3
+                }
+            ]
+        },
+        "metadata": {
+            "_id": {
+                "$oid": "5f34a3b7ec2479f276ff4c3d"
+            },
+            "creator": {
+                "_id": {
+                    "$oid": "5f34a3b7ec2479f276ff4c3e"
+                },
+                "userId": "5f2f5ff5741f07130a823603",
+                "timeCreated": {
+                    "$date": "2020-08-13T02:21:43.313Z"
+                }
+            },
+            "lastModified": {
+                "_id": {
+                    "$oid": "5f34a3b7ec2479f276ff4c3f"
+                },
+                "type": "create",
+                "userId": "5f2f5ff5741f07130a823603",
+                "timeModified": {
+                    "$date": "2020-08-13T02:21:43.313Z"
+                }
+            }
+        },
+        "runConfigurations": [],
+        "scriptGeneration": {
+            "assertions": [
+                {
+                    "_id": {
+                        "$oid": "5f34a416ec2479f276ff4c89"
+                    },
+                    "id": "5f2f3d19a16e94f444123bbf",
+                    "name": "A_HumanResourceNews",
+                    "text": "Human Resource News"
+                }
+            ]
+        }
+    }
+]

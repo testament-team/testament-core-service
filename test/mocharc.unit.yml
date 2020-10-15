@@ -1,0 +1,4 @@
+require: source-map-support/register
+full-trace: true
+spec: "dist/**/*.spec.js"
+exit: true

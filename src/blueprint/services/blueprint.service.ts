@@ -285,7 +285,7 @@ export class BlueprintService {
             throw new NotFoundException();
         }
         if(!Blueprint.userHasAccess(blueprint, userId, namespaceIds, access)) {
-            throw new ForbiddenException();
+            throw new ForbiddenException("User does not have access to this blueprint");
         }
         return blueprint;
     }

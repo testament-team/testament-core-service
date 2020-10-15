@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { TypegooseModule } from "nestjs-typegoose";
 import { env } from 'process';
 import { AppController } from './app.controller';
@@ -28,7 +28,8 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(SecurityMiddleware)
-      .forRoutes("/api/*")
+      .exclude({ path: "api/users", method: RequestMethod.POST })
+      .forRoutes("api/*")
   }
 
 }

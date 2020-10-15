@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, Injectable, NotFoundException, OnApplicationBootstrap } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { Access, Blueprint, RunConfiguration } from 'src/blueprint';
 import { BlueprintService } from 'src/blueprint/services/blueprint.service';
 import { NamespaceRepository } from 'src/namespace/repositories/namespace.repository';
@@ -6,29 +6,17 @@ import { Page, PageOptions } from 'src/pagination/pagination';
 import { SubmitRunDTO } from 'src/run/dtos/create-run.dto';
 import { RunRepository } from 'src/run/repositories/run.repository';
 import { Run, RunStatus } from 'src/run/run';
+import { RunEventBus } from '../events/run.event-bus';
 import { CustomRunConfiguration } from '../models/run-configuration';
-import { EventOptions, RunEventBus, ScriptGenerationStatus, ScriptGenerationStatusChangedEvent, SimulationStatus, SimulationStatusChangedEvent } from './run.event-bus';
 
 @Injectable()
-export class RunService implements OnApplicationBootstrap {
+export class RunService {
 
-    constructor(private blueprintService: BlueprintService, private runEventBus: RunEventBus, private runRepository: RunRepository, 
-                private namespaceRepository: NamespaceRepository) { 
+    constructor(private blueprintService: BlueprintService, private runEventBus: RunEventBus, 
+                private runRepository: RunRepository, private namespaceRepository: NamespaceRepository) { 
         
     }
-
-    async onApplicationBootstrap() {
-        try {
-            await this.runEventBus.subscribeToSimulationStatusChangedEvent(async (event, options) => 
-                this.onSimulationStatusChanged(event, options));
-            
-            await this.runEventBus.subscribeToScriptGenerationStatusChangedEvent(async (event, options) => 
-                this.onScriptGenerationStatusChanged(event, options));
-        } catch(err) {
-            console.error(err);
-        }
-    }
-
+    
     async createRun(userId: string, dto: SubmitRunDTO): Promise<Run> {
         const blueprint: Blueprint = await this.blueprintService.getBlueprintByAccess(userId, dto.blueprintId, Access.WRITE);
 
@@ -92,63 +80,6 @@ export class RunService implements OnApplicationBootstrap {
             throw new ForbiddenException();
         }
         return run;
-    }
-
-    private async onSimulationStatusChanged(event: SimulationStatusChangedEvent, options: EventOptions) {
-        switch(event.status) {
-            case SimulationStatus.RUNNING:
-                await this.runRepository.update(event.runId, { status: RunStatus.RUNNING, metadataTimeStarted: event.time });
-                break;
-            case SimulationStatus.FAILED:
-                await this.runRepository.update(event.runId, { status: RunStatus.FAILED, error: event.error, metadataTimeEnded: event.time });
-                break;
-            case SimulationStatus.CANCELLED:
-                await this.runRepository.update(event.runId, { status: RunStatus.CANCELLED, error: event.error, metadataTimeEnded: event.time });
-                break;
-            case SimulationStatus.COMPLETED:
-                const run: Run = await this.runRepository.findById(event.runId);
-                if(!run.runConfiguration.scriptGenerationOptions) {
-                    await this.runRepository.update(event.runId, { status: RunStatus.COMPLETED, metadataSimulationArtifactsId: event.artifactsId, metadataTimeEnded: event.time });
-                } else {
-                    await this.runEventBus.publishScriptGenerationStartEvent({
-                        runId: run.id,
-                        type: run.runConfiguration.scriptGenerationOptions.type,
-                        name: run.runConfiguration.scriptGenerationOptions.scriptName || run.blueprint.name,
-                        rules: run.blueprint.scriptGeneration,
-                        artifactsId: run.metadata.simulationArtifactsId,
-                        simulationArgs: run.runConfiguration.simulationOptions.args,
-                        creator: {
-                            name: "<unknown>", // TODO: Implement
-                            userId: run.metadata.creator.userId,
-                            email: null, // TODO: implement
-                        }
-                    });
-                }
-                break;
-            default:
-                await this.runRepository.update(event.runId, { status: RunStatus.FAILED, error: `Unknown simulation status: ${event.status}` });
-        }
-        options.ack = true;
-    }
-
-    private async onScriptGenerationStatusChanged(event: ScriptGenerationStatusChangedEvent, options: EventOptions) {
-        switch(event.status) {
-            case ScriptGenerationStatus.RUNNING:
-                await this.runRepository.update(event.runId, { status: RunStatus.RUNNING });
-                break;
-            case ScriptGenerationStatus.FAILED:
-                await this.runRepository.update(event.runId, { status: RunStatus.FAILED, error: event.error, metadataTimeEnded: event.time });
-                break;
-            case ScriptGenerationStatus.CANCELLED:
-                await this.runRepository.update(event.runId, { status: RunStatus.CANCELLED, error: event.error, metadataTimeEnded: event.time });
-                break;
-            case ScriptGenerationStatus.COMPLETED:
-                await this.runRepository.update(event.runId, { status: RunStatus.COMPLETED, metadataScriptAssetsId: event.assetsId, metadataTimeEnded: event.time });
-                break;
-            default:
-                await this.runRepository.update(event.runId, { status: RunStatus.FAILED, error: `Unknown script run status: ${event.status}` });
-        }
-        options.ack = true;
     }
 
 }

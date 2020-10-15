@@ -55,7 +55,7 @@ export interface ScriptGenerationStartEvent {
 export interface ScriptGenerationStatusChangedEvent {
     runId: string;
     status: ScriptGenerationStatus;
-    error: string;
+    error?: string;
     time: Date;
     assetsId?: string;
 }

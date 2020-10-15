@@ -32,9 +32,20 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "tslint -p tsconfig.json -c tslint.json",
-    "test": "mocha",
+    "test": "mocha --config test/mocharc.unit.yml",
     "test:debug": "mocha --inspect-brk",
     "test:cov": "nyc mocha",
+    "pretest:int": "docker-compose -f docker-compose.int.yml down -v --remove-orphans && docker-compose -f docker-compose.int.yml build && docker-compose -f docker-compose.int.yml up -d && echo \"Waiting 60 seconds for dependencies to start...\" && sleep 60",
+    "test:int": "mocha --config test/mocharc.int.yml",
+    "test:int:only": "mocha --config test/mocharc.int.yml",
+    "posttest:int": "docker-compose -f docker-compose.int.yml down -v --remove-orphans",
+    "test:int:logs": "mkdir -p tmp && docker-compose -f docker-compose.int.yml logs --no-color > tmp/integration-test.log",
+    "pretest:all": "npm run pretest:int",
+    "test:all": "mocha --config test/mocharc.all.yml",
+    "posttest:all": "npm run posttest:int",
+    "pretest:all:cov": "npm run pretest:all",
+    "test:all:cov": "nyc mocha --config test/mocharc.all.yml",
+    "posttest:all:cov": "npm run posttest:all",
     "open:cov": "open coverage/index.html",
     "docker:build": "docker build -t testament-core-service .",
     "docker:run": "docker run --rm -p 8080:8080 --name testament-core-service testament-core-service",
@@ -49,14 +60,6 @@
     "prepublishOnly": "npm test",
     "version": "git add -A",
     "postversion": "git push && git push --tags"
-  },
-  "mocha": {
-    "require": [
-      "source-map-support/register",
-      "reflect-metadata"
-    ],
-    "full-trace": true,
-    "spec": "dist/**/*.spec.js"
   },
   "nyc": {
     "extends": "@istanbuljs/nyc-config-typescript",

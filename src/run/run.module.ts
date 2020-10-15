@@ -6,12 +6,15 @@ import { NamespaceModule } from 'src/namespace/namespace.module';
 import { RunRepository } from 'src/run/repositories/run.repository';
 import { RunController } from 'src/run/run.controller';
 import { RunService } from 'src/run/services/run.service';
+import { UserModule } from 'src/user/user.module';
+import { RunEventBus } from './events/run.event-bus';
+import { ScriptGenerationStatusEventHandler } from './events/script-generation-status-changed.event-handler';
+import { SimulationStatusChangedEventHandler } from './events/simulation-status-changed.event-handler';
 import { Run } from './run';
-import { RunEventBus } from './services/run.event-bus';
 
 @Module({
-    imports: [TypegooseModule.forFeature([Run]), BlueprintModule, NamespaceModule, AmqpModule],
+    imports: [TypegooseModule.forFeature([Run]), BlueprintModule, NamespaceModule, AmqpModule, UserModule],
     controllers: [RunController],
-    providers: [RunEventBus, RunRepository, RunService]
+    providers: [RunEventBus, RunRepository, RunService, SimulationStatusChangedEventHandler, ScriptGenerationStatusEventHandler]
 })
 export class RunModule {}

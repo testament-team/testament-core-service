@@ -1,0 +1,11 @@
+[
+    {
+        "_id": {
+            "$oid": "5f2f5ff5741f07130a823603"
+        },
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "johndoe01@test.testament.dev",
+        "encryptedPassword": "password"
+    }
+]
