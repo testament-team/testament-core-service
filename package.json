@@ -85,7 +85,7 @@
     "@nestjs/common": "^6.7.2",
     "@nestjs/core": "^6.7.2",
     "@nestjs/mongoose": "^6.1.2",
-    "@nestjs/platform-express": "^6.7.2",
+    "@nestjs/platform-express": "^9.2.1",
     "@nestjs/swagger": "^4.6.0",
     "@typegoose/typegoose": "^7.3.1",
     "amqplib": "^0.6.0",
